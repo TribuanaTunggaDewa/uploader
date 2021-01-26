@@ -1,0 +1,18 @@
+# ignore all . files and . folders
+.*
+!.gitignore
+
+# all pycache
+*__pycache__/
+
+# python cache
+*.pyc
+
+# data
+data/
+
+# sock
+*.sock
+
+# log
+*.log
