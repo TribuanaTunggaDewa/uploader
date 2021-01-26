@@ -1,11 +1,22 @@
+import os
 import traceback
 
+from dotenv import load_dotenv
 from flask import Flask, Response
 from flask import request
 
 import logger
 from constanta import AUTH
-from main import local as module
+
+load_dotenv('.env')
+bucket_name = os.getenv('BUCKET_NAME')
+
+if bucket_name:
+    logger.write('File will be saved to {} bucket'.format(bucket_name))
+    from main import google_cloud as module
+else:
+    logger.write('File will be saved to local')
+    from main import local as module
 
 app = Flask(__name__)
 
