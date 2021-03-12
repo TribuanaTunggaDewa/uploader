@@ -17,6 +17,14 @@ def upload(request):
     return {'upload': 'OK'}
 
 
+def list_dir(request):
+    folder = request.form['folder']
+    path = './data/{}'.format(folder)
+    files = ['{}{}'.format(folder, f) for f in os.listdir(path) if os.path.isfile('{}{}'.format(path, f))]
+
+    return {'files': files}
+
+
 def delete(request):
     temp = request.form['path']
     path = '{}/{}'.format(UPLOAD_FOLDER, temp)

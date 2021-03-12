@@ -18,6 +18,19 @@ def upload(request):
     return {'upload': 'OK'}
 
 
+def list_dir(request):
+    folder = request.form['folder']
+
+    data = []
+    blobs = storage_client.list_blobs(bucket, prefix=folder, delimiter='/')
+    for blob in blobs:
+        if blob.name == folder:
+            continue
+        data.append(blob.name)
+
+    return {'data': data}
+
+
 def delete(request):
     path = request.form['path']
 
