@@ -42,7 +42,7 @@ def api_root():
     return 'OK'
 
 
-@app.route('/uploader', methods=['GET'])
+@app.route('/uploader/', methods=['GET'])
 def api_health():
     return 'Uploader is running...'
 
