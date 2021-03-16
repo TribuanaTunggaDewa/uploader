@@ -19,8 +19,8 @@ jobs:
       
     # Get version
     - name: Get the version
-      id: get_tag_name
-      run: echo ::set-output name=GIT_TAG_NAME::${GITHUB_REF/refs\/tags\//}
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     # Setup gcloud CLI
     - uses: google-github-actions/setup-gcloud@v0.2.0
@@ -43,17 +43,17 @@ jobs:
     - name: Build
       run: |-
         docker build \
-          --tag "asia.gcr.io/$GCLOUD_PROJECT_ID/$IMAGE:$GIT_TAG_NAME" \
+          --tag "asia.gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/$IMAGE:${{ steps.get_version.outputs.VERSION }}" \
           .
 
     # Push the Docker image to Google Container Registry
     - name: Publish
       run: |-
-        docker push "asia.gcr.io/$GCLOUD_PROJECT_ID/$IMAGE:$GIT_TAG_NAME"
+        docker push "asia.gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/$IMAGE:${{ steps.get_version.outputs.VERSION }}"
 
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
       run: |-
-        kubectl set image deployment $IMAGE $IMAGE=asia.gcr.io/$GCLOUD_PROJECT_ID/$IMAGE:$GIT_TAG_NAME -n $DEPLOYMENT_NAMESPACE
-        kubectl rollout status deployment/$IMAGE -n $DEPLOYMENT_NAMESPACE
-        kubectl get deployments -o wide -n DEPLOYMENT_NAMESPACE
+        kubectl set image deployment $IMAGE $IMAGE=asia.gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/$IMAGE:${{ steps.get_version.outputs.VERSION }} -n ${{ secrets.DEPLOYMENT_NAMESPACE }}
+        kubectl rollout status deployment/$IMAGE -n ${{ secrets.DEPLOYMENT_NAMESPACE }}
+        kubectl get deployments -o wide -n ${{ secrets.DEPLOYMENT_NAMESPACE }}
