@@ -23,7 +23,7 @@ jobs:
     # Get version
     - name: Get the version
       id: get_version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
     # Setup gcloud CLI
     - uses: google-github-actions/setup-gcloud@v0.2.0
